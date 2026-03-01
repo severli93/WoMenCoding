@@ -345,6 +345,29 @@
     margin-bottom: 1.2rem;
   }
 
+  /* ── Detail link ── */
+  .detail-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    margin-top: 1.1rem;
+    transition: gap 0.18s;
+  }
+
+  .project-card.blue .detail-link { color: var(--blue); }
+
+  .detail-link:hover { gap: 0.55rem; }
+
+  .detail-link::after {
+    content: '→';
+    font-size: 0.85rem;
+  }
+
   /* ── Stack tags ── */
   .stack {
     display: flex;
@@ -628,6 +651,7 @@
         <span class="stack-tag">openpyxl</span>
         <span class="stack-tag">GitHub Pages</span>
       </div>
+      <a href="project-research.html" class="detail-link">查看项目详情</a>
       <details>
         <summary>一步步是怎么做的？</summary>
         <div class="detail-steps">
@@ -686,6 +710,7 @@
         <span class="stack-tag">DNA Generator</span>
         <span class="stack-tag">Image API</span>
       </div>
+      <a href="project-design.html" class="detail-link">查看项目详情</a>
       <details>
         <summary>一步步是怎么做的？</summary>
         <div class="detail-steps">
@@ -734,6 +759,7 @@
         <span class="stack-tag">302.ai (Gemini)</span>
         <span class="stack-tag">NumPy</span>
       </div>
+      <a href="project-image.html" class="detail-link">查看项目详情</a>
       <details>
         <summary>一步步是怎么做的？</summary>
         <div class="detail-steps">

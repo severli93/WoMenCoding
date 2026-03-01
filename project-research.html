@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 市场机会调研平台 · WoMenCoding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg:        #FFFFFF;
+    --bg-card:   #F9FAF9;
+    --bg-code:   #F2F4F2;
+    --text:      #242424;
+    --muted:     #757575;
+    --border:    #E6E6E6;
+    --accent:    #1A7A3C;
+    --accent-lt: #E6F4EC;
+    --blue:      #1A4A7A;
+    --blue-lt:   #E6EEF4;
+    --num:       #D4EAD9;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lora', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    z-index: 90;
+  }
+
+  .nav-brand {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+  }
+
+  .nav-back {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.18s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back::before { content: '←'; font-size: 0.9rem; }
+
+  /* ── Container ── */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 112px 0 60px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 1.2rem;
+    color: var(--text);
+  }
+
+  .hero-sub {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.75;
+    max-width: 560px;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.8rem;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    background: var(--bg-code);
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── Sections ── */
+  section {
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 1.2rem;
+    color: var(--text);
+  }
+
+  p { margin-bottom: 1.2rem; }
+  p:last-child { margin-bottom: 0; }
+  strong { font-weight: 500; }
+  em { font-style: italic; }
+
+  /* ── Screenshot ── */
+  .screenshot-block {
+    margin: 2rem 0;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+
+  .screenshot-block img {
+    width: 100%;
+    display: block;
+  }
+
+  .screenshot-caption {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    color: var(--muted);
+    padding: 0.7rem 1rem;
+    border-top: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  /* ── Steps ── */
+  .steps {
+    list-style: none;
+    counter-reset: steps;
+    margin: 1.2rem 0 0;
+  }
+
+  .steps li {
+    counter-increment: steps;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .steps li::before {
+    content: counter(steps);
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-top: 0.18rem;
+  }
+
+  /* ── Highlight box ── */
+  .highlight-box {
+    background: var(--accent-lt);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+    padding: 1.2rem 1.5rem;
+    margin: 1.8rem 0;
+  }
+
+  .highlight-box p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .highlight-box strong { color: var(--accent); }
+
+  /* ── Feature grid ── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 1.6rem 0;
+  }
+
+  .feature-card {
+    background: var(--bg-card);
+    padding: 1.3rem 1.5rem;
+  }
+
+  .feature-icon {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+    color: var(--text);
+  }
+
+  .feature-body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ── Diagram ── */
+  .diagram {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.3rem 1.5rem;
+    margin: 1.6rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    line-height: 1.85;
+    color: var(--muted);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .diagram .hl { color: var(--accent); }
+  .diagram .bl { color: var(--blue); }
+
+  /* ── Coda ── */
+  .coda {
+    padding: 60px 0 80px;
+    text-align: center;
+  }
+
+  .coda-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 2rem;
+  }
+
+  .coda-dots span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .coda p {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.85;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    margin-top: 1.5rem;
+    transition: gap 0.18s;
+  }
+  .back-link:hover { gap: 0.65rem; }
+  .back-link::before { content: '←'; }
+
+  /* ── Reveal ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 580px) {
+    .feature-grid { grid-template-columns: 1fr; }
+    .hero { padding: 88px 0 48px; }
+  }
+</style>
+</head>
+
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">WoMenCoding</a>
+  <a href="index.html" class="nav-back">返回首页</a>
+</nav>
+
+<div class="container">
+
+  <!-- ── Hero ── -->
+  <header class="hero reveal">
+    <div class="hero-eyebrow">项目一 · Research</div>
+    <h1>AI 市场机会调研平台</h1>
+    <p class="hero-sub">
+      45 个 AI 产品病毒场景的调研、评分与协作分析——
+      从一个问题出发，用 Agent 扫市场、搭工具、让团队共同分析。
+    </p>
+    <div class="hero-tags">
+      <span class="tag">Python</span>
+      <span class="tag">Flask</span>
+      <span class="tag">Playwright</span>
+      <span class="tag">pandas</span>
+      <span class="tag">openpyxl</span>
+      <span class="tag">GitHub Pages</span>
+    </div>
+  </header>
+
+
+  <!-- ── 截图 ── -->
+  <section class="reveal">
+    <div class="section-label">界面截图</div>
+    <div class="screenshot-block">
+      <img src="微信图片_2026-03-01_133503_310.jpg" alt="AI 市场机会调研平台 — 场景卡片视图">
+      <div class="screenshot-caption">
+        场景卡片视图 · 45 个 AI 爆点场景分析 · 支持按方向、市场、技术匹配度筛选排序
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── 起点 ── -->
+  <section class="reveal">
+    <div class="section-label">项目起点</div>
+    <h2>从一个问题开始</h2>
+    <p>
+      这个项目的起点是一个很具体的问题：<em>哪些 AI 使用场景能让小白用户一句话完成生产级输出，并且愿意自发分享？</em>
+    </p>
+    <p>
+      我们不是先写调研报告，而是直接让 Agent 去扫——Product Hunt、小红书、抖音，
+      把近期在爆的 AI 产品案例抓下来，然后结构化评分，再搭一个平台让团队一起分析。
+    </p>
+
+    <div class="highlight-box">
+      <p>
+        <strong>核心发现：</strong>用 Agent 做调研的效率是传统方式的 5 倍以上。
+        不是因为 AI 比人聪明，而是它可以同时处理数十个方向，把「扫描」这件事做到极致。
+        人的精力只需要放在「判断」上。
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ── 功能 ── -->
+  <section class="reveal">
+    <div class="section-label">核心功能</div>
+    <h2>一个平台，两种协作方式</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-title">多人实时协作</div>
+        <p class="feature-body">
+          Flask 本地服务，局域网内所有人都能在浏览器里编辑评分，
+          乐观锁检测冲突，不会互相覆盖。
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">GitHub Pages 只读版</div>
+        <p class="feature-body">
+          无需安装任何环境，把静态版发给不懂开发的同事，
+          他们也能查看全部场景和分析结论。
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">五维度评分体系</div>
+        <p class="feature-body">
+          每个场景按「小白友好度 / 病毒传播力 / 技术匹配度 /
+          市场空白 / 变现潜力」五个维度打分。
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">灵活筛选 + 导出</div>
+        <p class="feature-body">
+          按方向、市场（海内外）、技术完美匹配度实时筛选，
+          一键导出 Excel 供进一步分析。
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── 技术架构 ── -->
+  <section class="reveal">
+    <div class="section-label">技术架构</div>
+    <h2>数据流从采集到呈现</h2>
+
+    <div class="diagram"><span class="hl">数据采集</span>   Playwright 爬虫 → Product Hunt / 小红书 / 抖音
+          Agent 扫描 → 结构化 JSON → Excel 存储
+
+<span class="hl">后端服务</span>   Flask + pandas → REST API
+          乐观锁 → ETag 冲突检测
+
+<span class="bl">前端展示</span>   场景卡片 / 数据表格 / 调研报告 三视图
+          实时筛选 → 综合评分排序 → Excel 导出
+
+<span class="hl">静态版</span>     GitHub Pages → 零环境依赖只读访问</div>
+  </section>
+
+
+  <!-- ── 步骤 ── -->
+  <section class="reveal">
+    <div class="section-label">完整过程</div>
+    <h2>一步步是怎么做的</h2>
+    <ol class="steps">
+      <li>先定问题：用一句话写清楚调研目标，让 Agent 帮我们分解成可执行的搜索策略。</li>
+      <li>信号扫描：让 Agent 搜 Product Hunt、小红书、抖音等平台的热门 AI 产品，抓取近期在爆的案例。</li>
+      <li>结构化评分：把每个场景按五个维度打分，存入 Excel，形成可操作的数据集。</li>
+      <li>搭可视化平台：用 Flask 起一个本地服务，让团队成员都能在浏览器里看到场景卡片、编辑评分，不需要碰代码。</li>
+      <li>多人协作上线：同时支持本地局域网实时协作 + GitHub Pages 静态版，保证每个人都能参与，无论有没有开发环境。</li>
+    </ol>
+  </section>
+
+
+  <!-- ── Coda ── -->
+  <div class="coda reveal">
+    <div class="coda-dots">
+      <span></span><span></span><span></span>
+    </div>
+    <p>
+      调研不是先想清楚再做——<br>
+      而是先跑起来，让数据告诉你答案在哪里。
+    </p>
+    <a href="index.html" class="back-link">返回首页</a>
+  </div>
+
+</div>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = `${(i % 4) * 0.06}s`;
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>

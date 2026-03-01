@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图像分层与修复工具 · WoMenCoding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg:        #FFFFFF;
+    --bg-card:   #F9FAF9;
+    --bg-code:   #F2F4F2;
+    --text:      #242424;
+    --muted:     #757575;
+    --border:    #E6E6E6;
+    --accent:    #1A7A3C;
+    --accent-lt: #E6F4EC;
+    --blue:      #1A4A7A;
+    --blue-lt:   #E6EEF4;
+    --num:       #D4EAD9;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lora', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    z-index: 90;
+  }
+
+  .nav-brand {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+  }
+
+  .nav-back {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.18s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back::before { content: '←'; font-size: 0.9rem; }
+
+  /* ── Container ── */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 112px 0 60px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1.2rem;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 1.2rem;
+    color: var(--text);
+  }
+
+  .hero-sub {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.75;
+    max-width: 560px;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.8rem;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    background: var(--bg-code);
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── Sections ── */
+  section {
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1.2rem;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 1.2rem;
+    color: var(--text);
+  }
+
+  p { margin-bottom: 1.2rem; }
+  p:last-child { margin-bottom: 0; }
+  strong { font-weight: 500; }
+  em { font-style: italic; }
+
+  /* ── Screenshot ── */
+  .screenshot-block {
+    margin: 2rem 0;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+
+  .screenshot-block img {
+    width: 100%;
+    display: block;
+  }
+
+  .screenshot-caption {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    color: var(--muted);
+    padding: 0.7rem 1rem;
+    border-top: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  /* ── Steps ── */
+  .steps {
+    list-style: none;
+    counter-reset: steps;
+    margin: 1.2rem 0 0;
+  }
+
+  .steps li {
+    counter-increment: steps;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* 图像工具用蓝色序号 */
+  .steps li::before {
+    content: counter(steps);
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-top: 0.18rem;
+  }
+
+  /* ── Highlight box ── */
+  .highlight-box {
+    background: var(--blue-lt);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 4px 4px 0;
+    padding: 1.2rem 1.5rem;
+    margin: 1.8rem 0;
+  }
+
+  .highlight-box p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .highlight-box strong { color: var(--blue); }
+
+  /* ── Mode cards ── */
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 1.6rem 0;
+  }
+
+  .mode-card {
+    background: var(--bg-card);
+    padding: 1.5rem 1.6rem;
+  }
+
+  .mode-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--blue);
+    background: var(--blue-lt);
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    border: 1px solid #a8c0db;
+    margin-bottom: 0.7rem;
+  }
+
+  .mode-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.45rem;
+    color: var(--text);
+  }
+
+  .mode-body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* ── API flow ── */
+  .diagram {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.3rem 1.5rem;
+    margin: 1.6rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    line-height: 1.85;
+    color: var(--muted);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .diagram .hl { color: var(--accent); }
+  .diagram .bl { color: var(--blue); }
+  .diagram .gl { color: #2E7D32; }
+
+  /* ── Coda ── */
+  .coda {
+    padding: 60px 0 80px;
+    text-align: center;
+  }
+
+  .coda-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 2rem;
+  }
+
+  .coda-dots span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .coda p {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.85;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: var(--blue);
+    text-decoration: none;
+    margin-top: 1.5rem;
+    transition: gap 0.18s;
+  }
+  .back-link:hover { gap: 0.65rem; }
+  .back-link::before { content: '←'; }
+
+  /* ── Reveal ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 580px) {
+    .mode-grid { grid-template-columns: 1fr; }
+    .hero { padding: 88px 0 48px; }
+  }
+</style>
+</head>
+
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">WoMenCoding</a>
+  <a href="index.html" class="nav-back">返回首页</a>
+</nav>
+
+<div class="container">
+
+  <!-- ── Hero ── -->
+  <header class="hero reveal">
+    <div class="hero-eyebrow">项目三 · Image Processing</div>
+    <h1>图像分层与修复工具</h1>
+    <p class="hero-sub">
+      把一张合成好的设计稿拆回「素材层 + 背景层 + 文字层」，
+      或者对某一层做 AI 修复——阿里云 + Gemini，拼在一起用。
+    </p>
+    <div class="hero-tags">
+      <span class="tag">Python</span>
+      <span class="tag">Streamlit</span>
+      <span class="tag">PIL</span>
+      <span class="tag">Aliyun API</span>
+      <span class="tag">302.ai (Gemini)</span>
+      <span class="tag">NumPy</span>
+    </div>
+  </header>
+
+
+  <!-- ── 截图 ── -->
+  <section class="reveal">
+    <div class="section-label">界面截图</div>
+    <div class="screenshot-block">
+      <img src="微信图片_2026-03-01_133444_609.png" alt="图像分层工具 — 分层结果展示">
+      <div class="screenshot-caption">
+        Layer Editor 最终结果 · 原图 → 去背景 → 重新合成 · 天然牧场信养牛品牌图
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── 核心思路 ── -->
+  <section class="reveal">
+    <div class="section-label">核心思路</div>
+    <h2>把「合成好的图」拆回来</h2>
+    <p>
+      做设计时常有一个痛点：拿到一张合成好的图，想单独修改某一层——
+      比如换背景、替换产品、去掉文字——但找不到原始分层文件。
+    </p>
+    <p>
+      这个工具做的事就是：<strong>把已经合成的图拆回各个层</strong>，
+      或者对某一层做 AI 修复，再重新合成。
+    </p>
+
+    <div class="highlight-box">
+      <p>
+        <strong>核心洞察：</strong>阿里云有成熟的主体识别 + 抠图 API，
+        Gemini 有 inpainting 能力——把它们拼在一起，
+        就能完成「分层 → 修改 → 重合成」的完整流程，
+        而且不需要 Photoshop。
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ── 两种模式 ── -->
+  <section class="reveal">
+    <div class="section-label">使用模式</div>
+    <h2>两种操作方式</h2>
+
+    <div class="mode-grid">
+      <div class="mode-card">
+        <div class="mode-badge">Mode 1</div>
+        <div class="mode-title">Layer Editor</div>
+        <p class="mode-body">
+          上传一张图，自动分离主体层、背景层、文字层。
+          可以单独对某一层做修复或替换，再重新合成输出。
+        </p>
+      </div>
+      <div class="mode-card">
+        <div class="mode-badge">Mode 2</div>
+        <div class="mode-title">UI Deconstructor</div>
+        <p class="mode-body">
+          把一张 UI 截图分析成组件结构——
+          哪里是导航、哪里是卡片、哪里是按钮——
+          让设计师能重新编辑各个层级。
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── 技术架构 ── -->
+  <section class="reveal">
+    <div class="section-label">技术架构</div>
+    <h2>两个 API 的分工</h2>
+
+    <div class="diagram"><span class="bl">阿里云 API</span>   主体识别 → 精准抠图 → 透明背景 PNG
+               分割置信度 + 边缘羽化处理
+
+<span class="gl">Gemini API</span>   inpainting → 对指定区域做 AI 修复
+  (via 302.ai)  理解图像内容 → 上下文一致性填充
+
+<span class="hl">Python + PIL</span>  图层合并 / 蒙版处理 / 透明度混合
+               NumPy 矩阵操作 → 精细像素级控制
+
+<span class="hl">Streamlit</span>    本地 UI → 上传 / 预览 / 下载
+               几十行代码完成完整交互界面</div>
+  </section>
+
+
+  <!-- ── 步骤 ── -->
+  <section class="reveal">
+    <div class="section-label">完整过程</div>
+    <h2>一步步是怎么做的</h2>
+    <ol class="steps">
+      <li>先选工具：阿里云有抠图 API（主体识别），302.ai 有 Gemini 的图像修复能力——把它们拼在一起用。</li>
+      <li>搭 Streamlit 界面：不需要前端开发，Python 写 UI，上传图片 → 选择操作 → 看结果，整个交互几十行代码搞定。</li>
+      <li>Layer Editor 模式：上传一张图，调用阿里云 API 抠出主体，分离背景层，再用 Gemini 对某一层做 inpainting 修复。</li>
+      <li>UI Deconstructor 模式：把一张 UI 截图分析成组件结构，让设计师能重新编辑各个层级。</li>
+      <li>本地跑，立刻看效果——这就是 Web Coding 的最大好处：不用部署，不用等，做完就能用。</li>
+    </ol>
+  </section>
+
+
+  <!-- ── 为什么好玩 ── -->
+  <section class="reveal">
+    <div class="section-label">这个项目的意义</div>
+    <h2>拼接能力，而不是造能力</h2>
+    <p>
+      这个 demo 最有意思的地方不是技术有多复杂，而是它展示了一种思路：
+      <strong>你不需要从零训练一个模型，也不需要自己实现抠图算法</strong>。
+    </p>
+    <p>
+      把现有的成熟 API 组合起来，用 Python 做胶水，
+      用 Streamlit 快速出界面——几天时间就能做出一个真正可用的工具。
+    </p>
+    <p>
+      这是 Web Coding 最直接的体现：<em>有想法，直接组装，立刻能用。</em>
+    </p>
+  </section>
+
+
+  <!-- ── Coda ── -->
+  <div class="coda reveal">
+    <div class="coda-dots">
+      <span></span><span></span><span></span>
+    </div>
+    <p>
+      最好的工具往往不是从零造出来的，<br>
+      而是把对的东西拼在了一起。
+    </p>
+    <a href="index.html" class="back-link">返回首页</a>
+  </div>
+
+</div>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = `${(i % 4) * 0.06}s`;
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
