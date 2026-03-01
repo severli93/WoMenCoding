@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Coding 实践分享</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg:        #FFFFFF;
+    --bg-card:   #F9FAF9;
+    --bg-code:   #F2F4F2;
+    --text:      #242424;
+    --muted:     #757575;
+    --border:    #E6E6E6;
+    --accent:    #1A7A3C;   /* medium green */
+    --accent-lt: #E6F4EC;
+    --green:     #1A7A3C;
+    --green-lt:  #E6F4EC;
+    --blue:      #1A4A7A;
+    --blue-lt:   #E6EEF4;
+    --num:       #D4EAD9;   /* large section number color */
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lora', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Progress bar ── */
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    width: 0%;
+    background: var(--accent);
+    z-index: 100;
+    transition: width 0.1s linear;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    z-index: 90;
+  }
+
+  .nav-brand {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.18s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── Main container ── */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 128px 0 72px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.6rem;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5.5vw, 3.4rem);
+    line-height: 1.18;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 1.4rem;
+    color: var(--text);
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-family: 'Lora', serif;
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.75;
+    max-width: 540px;
+  }
+
+  .hero-meta {
+    margin-top: 2.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .hero-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  /* ── Section structure ── */
+  section {
+    padding: 68px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .section-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.2rem;
+    line-height: 1;
+    color: var(--num);
+    font-weight: 700;
+    flex-shrink: 0;
+    user-select: none;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.28;
+    color: var(--text);
+  }
+
+  /* ── Body text ── */
+  p { margin-bottom: 1.2rem; }
+  p:last-child { margin-bottom: 0; }
+
+  strong { font-weight: 500; }
+
+  em { font-style: italic; }
+
+  /* ── Workflow grid ── */
+  .workflow-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+
+  .workflow-card {
+    background: var(--bg-card);
+    padding: 1.4rem 1.6rem;
+  }
+
+  .wf-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+
+  .wf-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.45rem;
+    color: var(--text);
+  }
+
+  .wf-body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* ── Pull quote ── */
+  .pullquote {
+    border-left: 2px solid var(--accent);
+    padding: 0.2rem 0 0.2rem 1.5rem;
+    margin: 2.4rem 0;
+  }
+
+  .pullquote p {
+    font-family: 'Lora', serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text);
+    margin: 0;
+  }
+
+  /* ── Steps list ── */
+  .steps {
+    list-style: none;
+    counter-reset: steps;
+    margin: 1.4rem 0 0;
+  }
+
+  .steps li {
+    counter-increment: steps;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  .steps li::before {
+    content: counter(steps);
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+
+  /* ── Project cards ── */
+  .project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--accent);
+  }
+
+  .project-card.blue::before { background: var(--blue); }
+
+  .project-tag {
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+    padding: 0.12rem 0.5rem;
+    background: var(--accent-lt);
+    border-radius: 3px;
+  }
+
+  .project-card.blue .project-tag {
+    color: var(--blue);
+    background: var(--blue-lt);
+  }
+
+  .project-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.55rem;
+    color: var(--text);
+  }
+
+  .project-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.87rem;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1.2rem;
+  }
+
+  /* ── Stack tags ── */
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .stack-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    background: var(--bg-code);
+    padding: 0.12rem 0.48rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── Expandable steps ── */
+  details {
+    margin-top: 1.2rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+  }
+
+  summary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--accent);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    user-select: none;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  summary::before {
+    content: '▸';
+    transition: transform 0.18s;
+    display: inline-block;
+    font-size: 0.7rem;
+  }
+
+  details[open] summary::before { transform: rotate(90deg); }
+
+  .detail-steps { margin-top: 0.8rem; }
+
+  /* ── Diagram block ── */
+  .diagram {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.3rem 1.5rem;
+    margin: 1.6rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    line-height: 1.85;
+    color: var(--muted);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .diagram .hl { color: var(--accent); }
+  .diagram .gl { color: #2E7D32; }
+  .diagram .bl { color: var(--blue); }
+
+  /* ── Final coda ── */
+  .coda {
+    padding: 60px 0 80px;
+    text-align: center;
+  }
+
+  .coda-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 2rem;
+  }
+
+  .coda-dots span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .coda p {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.85;
+  }
+
+  /* ── Reveal animation ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 580px) {
+    .workflow-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .hero { padding: 96px 0 56px; }
+    .section-num { font-size: 2.6rem; }
+  }
+</style>
+</head>
+
+<body>
+
+<div id="progress"></div>
+
+<nav>
+  <span class="nav-brand">WoMenCoding</span>
+  <ul class="nav-links">
+    <li><a href="#thinking">感想</a></li>
+    <li><a href="#research">调研平台</a></li>
+    <li><a href="#design">设计 Agent</a></li>
+    <li><a href="#image">图像分层</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+  <!-- ── Hero ── -->
+  <header class="hero reveal">
+    <div class="hero-eyebrow">Web Coding 实践分享 · 2026</div>
+    <h1>用 AI <em>直接去做</em>，<br>而不是想清楚再做</h1>
+    <p class="hero-sub">
+      三个项目、两种协作方式、一个关于 ADHD 与大模型思维的观察——
+      写给所有想开始但还没开始的人。
+    </p>
+    <div class="hero-meta">
+      <span>2026 年 3 月</span>
+      <span class="hero-dot"></span>
+      <span>WoMenCoding 分享会</span>
+    </div>
+  </header>
+
+
+  <!-- ══════════════════════════════════════
+       PART 1 — 感想与工作流
+  ══════════════════════════════════════ -->
+  <section id="thinking">
+
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2 class="section-title">高效工作流，我是怎么做的</h2>
+    </div>
+
+    <p class="reveal">
+      最近做了几个项目之后，我慢慢摸索出一套<strong>并行工作节奏</strong>——不是同时做多件事让自己焦虑，
+      而是让每个工具在各自的轨道上跑，我负责在中间做决策和连接。
+    </p>
+
+    <div class="workflow-grid reveal">
+      <div class="workflow-card">
+        <div class="wf-label">多任务并行</div>
+        <div class="wf-title">一边生成，一边阅读</div>
+        <p class="wf-body">
+          让 Claude 跑一个比较慢的任务时，切到 Anti-Gravity 做深度阅读，
+          或者处理另一件完全不同的事。不等待，不空转。
+        </p>
+      </div>
+      <div class="workflow-card">
+        <div class="wf-label">资源切换</div>
+        <div class="wf-title">Token 用完？无缝换一个</div>
+        <p class="wf-body">
+          单个账号额度耗尽时，浏览器端切换登录 + 同步调整 IDE 接入方式，
+          任务不中断，继续往下走。
+        </p>
+      </div>
+      <div class="workflow-card">
+        <div class="wf-label">云端部署</div>
+        <div class="wf-title">RunCloud 降低门槛</div>
+        <p class="wf-body">
+          借助 RunCloud 等管理面板，云服务器的部署和管理变得像操作本地一样直观，
+          不需要精通运维也能快速上线。
+        </p>
+      </div>
+      <div class="workflow-card">
+        <div class="wf-label">核心节奏</div>
+        <div class="wf-title">做 → 看结果 → 调整</div>
+        <p class="wf-body">
+          Web coding 最大的好处是反馈极快。不需要等一个「完美计划」，
+          先跑起来，看到真实结果，再决定下一步。
+        </p>
+      </div>
+    </div>
+
+    <div class="pullquote reveal">
+      <p>
+        大模型的思维方式是用最少的 token 完成任务——跟大脑「偷懒」的本质一样。
+        当你直接告诉它你想要什么，中间很多过程就会被合理简化。
+      </p>
+    </div>
+
+    <p class="reveal">
+      我有 ADHD，有时候会不自觉地把任务想得很复杂。但当我开始用<strong>「直接成为」</strong>的思维方式，
+      就会直接问 Agent：<em>「我能不能做这件事？需要哪些工具？你能帮我什么？」</em>
+    </p>
+
+    <p class="reveal">
+      这种思维不只是用 AI 的技巧，它改变了我跟人合作的方式——
+      我会更清楚地去想：<strong>对方想要从我这里得到什么？我们最终想做成什么？中间的 gap 有多大？</strong>
+    </p>
+
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       PART 2 — AI 时代的团队协作
+  ══════════════════════════════════════ -->
+  <section>
+
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">AI 时代的团队协作模式</h2>
+    </div>
+
+    <p class="reveal">
+      当团队里每个人都有自己的 Coding Agent，协作模式会发生一些结构性的变化。
+      我们在调研项目里用了「<strong>定量 + 定性结合</strong>」的方式，效能提升非常明显。
+    </p>
+
+    <div class="diagram reveal"><span class="hl">定量分析</span>  → 每位成员负责不同方向，AI 大规模处理数据
+<span class="gl">定性分析</span>  → 统一可视化 Dashboard，线下沟通，划线标注达成共识
+<span class="bl">产出</span>     → 简洁的观点文档，支撑后续决策</div>
+
+    <p class="reveal">
+      最直观的感受：每位成员配备一个 Coding Agent，团队实际效能从 <strong>N 提升到 N×2</strong>。
+      不是 AI 替代了人，而是每个人都多了一个随时在线、不会疲惫的「执行搭档」。
+    </p>
+
+    <div class="pullquote reveal">
+      <p>
+        「一人一机」不是噱头——它真实地改变了谁能做什么、做得多快、做得多好。
+      </p>
+    </div>
+
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       PART 3 — 项目实践 · Research
+  ══════════════════════════════════════ -->
+  <section id="research">
+
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">项目一：AI 市场机会调研平台</h2>
+    </div>
+
+    <p class="reveal">
+      这个项目的起点是一个问题：<em>哪些 AI 使用场景能让小白用户一句话完成生产级输出，并且愿意自发分享？</em>
+      我们用 Agent 扫了市场，抓取数据，然后搭了一个协作平台让团队共同分析。
+    </p>
+
+    <div class="project-card reveal">
+      <span class="project-tag">Research · Flask · GitHub Pages</span>
+      <div class="project-title">AI 市场机会调研平台</div>
+      <p class="project-desc">
+        45 个 AI 产品病毒场景的调研、评分与协作分析平台。支持多人在线编辑、
+        乐观锁冲突检测、场景筛选排序、Excel 导出，以及无需安装环境的 GitHub Pages 只读版。
+      </p>
+      <div class="stack">
+        <span class="stack-tag">Python</span>
+        <span class="stack-tag">Flask</span>
+        <span class="stack-tag">Playwright</span>
+        <span class="stack-tag">pandas</span>
+        <span class="stack-tag">openpyxl</span>
+        <span class="stack-tag">GitHub Pages</span>
+      </div>
+      <details>
+        <summary>一步步是怎么做的？</summary>
+        <div class="detail-steps">
+          <ol class="steps">
+            <li>先定问题：我们想找什么？用一句话写清楚调研目标，让 Agent 帮我们分解成可执行的搜索策略。</li>
+            <li>信号扫描：让 Agent 搜 Product Hunt、小红书、抖音等平台的热门 AI 产品，抓取近期在爆的案例。</li>
+            <li>结构化评分：把每个场景按「小白友好度 / 病毒传播力 / 技术匹配度 / 市场空白 / 变现潜力」五个维度打分，存入 Excel。</li>
+            <li>搭可视化平台：用 Flask 起一个本地服务，让团队成员都能在浏览器里看到场景卡片、编辑评分，不需要碰代码。</li>
+            <li>多人协作：同时支持本地局域网实时协作 + GitHub Pages 静态版，保证每个人都能参与，无论有没有开发环境。</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       PART 4 — Design Agent
+  ══════════════════════════════════════ -->
+  <section id="design">
+
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2 class="section-title">项目二：Marketing Design Agent</h2>
+    </div>
+
+    <p class="reveal">
+      这个项目是 Web Coding 方式最直接的体现——我想把一套设计工作流「落地」成一个真正能用的工具，
+      而不只是一堆文档或者 prompt。
+    </p>
+
+    <p class="reveal">
+      核心思路是把设计任务分成四个复杂度级别，然后为每个级别配置对应的 skill 和工作流。
+      这样不管用户提什么需求，Agent 都能自动路由到合适的处理逻辑。
+    </p>
+
+    <div class="diagram reveal"><span class="hl">用户输入</span>  →  意图识别  →  任务分级
+
+<span class="hl">Level 1</span>  简单图片      → 直接生图，无文案需求
+<span class="gl">Level 2</span>  主图 / 场景图 → 可选文案（卖点标签）
+<span class="gl">Level 3</span>  商详海报      → 必须文案（每图配 narrative）
+<span class="bl">Level 4</span>  创意海报      → 必须文案（完整营销文案）</div>
+
+    <div class="project-card reveal">
+      <span class="project-tag">Design Agent · Next.js · Skills System</span>
+      <div class="project-title">Marketing Design Agent</div>
+      <p class="project-desc">
+        一个结构化的设计 + 文案生成 Agent，内置 DNA 生成器（提取品牌调性）、
+        任务路由器、Identity 一致性保持机制，以及按任务类型分级的 skill 库。
+      </p>
+      <div class="stack">
+        <span class="stack-tag">Next.js</span>
+        <span class="stack-tag">TypeScript</span>
+        <span class="stack-tag">Skill System</span>
+        <span class="stack-tag">DNA Generator</span>
+        <span class="stack-tag">Image API</span>
+      </div>
+      <details>
+        <summary>一步步是怎么做的？</summary>
+        <div class="detail-steps">
+          <ol class="steps">
+            <li>先想清楚「设计任务」有哪些类型——从最简单的产品图到最复杂的创意海报，用复杂度分级来管理不同的处理逻辑。</li>
+            <li>搭 DNA 生成器：让 Agent 分析竞品样本或品牌素材，提取出标准化的「文案 DNA」和「设计 DNA」，作为后续生成的基础。</li>
+            <li>写任务路由器：一个统一的分发逻辑，根据用户触发词自动判断该走哪条流程，调哪个 skill。</li>
+            <li>搭 Identity 保持机制：产品外形、Logo、品牌色——不让 AI 随意改，严格控制一致性（产品图用图生图 / 抠图，Logo 后期叠加）。</li>
+            <li>用 Web Coding 方式部署：写好 skill 文档，配 Next.js 前端，直接在本地跑起来看效果，快速迭代。</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       PART 5 — Image Layer Tool
+  ══════════════════════════════════════ -->
+  <section id="image">
+
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2 class="section-title">项目三：图像分层与修复工具</h2>
+    </div>
+
+    <p class="reveal">
+      这个是我觉得最「好玩」的一个 demo——把一张合成好的设计稿拆回「素材层 + 背景层 + 文字层」，
+      或者反过来，把某一层修复掉。本质上是把阿里云的图像 API 和 Gemini 的 inpainting 能力拼在一起。
+    </p>
+
+    <div class="project-card blue reveal">
+      <span class="project-tag">Image Processing · Streamlit · Aliyun + Gemini</span>
+      <div class="project-title">Image Layer Separation & Inpainting</div>
+      <p class="project-desc">
+        两种模式：Layer Editor（分层编辑，提取主体 / 背景 / 文字各层）
+        和 UI Deconstructor（把 UI 截图拆解成可编辑的组件层）。
+        本地 Streamlit 界面，直接上传图片就能用。
+      </p>
+      <div class="stack">
+        <span class="stack-tag">Python</span>
+        <span class="stack-tag">Streamlit</span>
+        <span class="stack-tag">PIL</span>
+        <span class="stack-tag">Aliyun API</span>
+        <span class="stack-tag">302.ai (Gemini)</span>
+        <span class="stack-tag">NumPy</span>
+      </div>
+      <details>
+        <summary>一步步是怎么做的？</summary>
+        <div class="detail-steps">
+          <ol class="steps">
+            <li>先选工具：阿里云有抠图 API（主体识别），302.ai 有 Gemini 的图像修复能力——把它们拼在一起用。</li>
+            <li>搭 Streamlit 界面：不需要前端开发，Python 写 UI，上传图片 → 选择操作 → 看结果，整个交互几十行代码搞定。</li>
+            <li>Layer Editor 模式：上传一张图，调用阿里云 API 抠出主体，分离背景层，再用 Gemini 对某一层做 inpainting 修复。</li>
+            <li>UI Deconstructor 模式：把一张 UI 截图分析成组件结构，让设计师能重新编辑各个层级。</li>
+            <li>本地跑，立刻看效果——这就是 Web Coding 的最大好处：不用部署，不用等，做完就能用。</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+
+  </section>
+
+
+  <!-- ── Coda ── -->
+  <div class="coda reveal">
+    <div class="coda-dots">
+      <span></span><span></span><span></span>
+    </div>
+    <p>
+      这三个项目都不是「规划好了再做」——<br>
+      都是「有个想法，直接跟 Agent 说，跑起来看看」。<br><br>
+      <em>直接成为，直接去做。</em>
+    </p>
+  </div>
+
+</div><!-- /container -->
+
+
+<script>
+  // ── Progress bar ──
+  window.addEventListener('scroll', () => {
+    const el = document.documentElement;
+    const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+  });
+
+  // ── Reveal on scroll ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = `${(i % 4) * 0.06}s`;
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
